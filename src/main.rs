@@ -3,17 +3,24 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufReader, SeekFrom};
 
-fn open(file_name: String) -> BufReader<File> {
-    let file = File::open(file_name.clone()).unwrap();
-    let mut reader = BufReader::new(file);
-    reader.seek(SeekFrom::End(0)).unwrap();
+struct Tail {
+    reader: BufReader<File>
+}
 
-    reader
+impl Tail {
+    fn new(file_name: String) -> Tail {
+        let file = File::open(file_name.clone()).unwrap();
+        let mut reader = BufReader::new(file);
+        reader.seek(SeekFrom::End(0)).unwrap();
+
+        Tail { reader }
+    }
 }
 
 fn main() {
     let file_name = env::args().nth(1).unwrap();
-    let mut reader = open(file_name.clone());
+    let tail = Tail::new(file_name.clone());
+    let mut reader = tail.reader;
 
     loop {
         let mut line = String::new();
