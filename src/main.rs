@@ -11,36 +11,40 @@ use regex::Regex;
 use clap::{App, Arg};
 
 // Got this from here: https://stackoverflow.com/a/6640851/233720
-const UUID_REGEX: &str = r"\[(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)\].*";
+const UUID_REGEX: &str =
+    r"\[(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)\].*";
 
 fn main() {
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
         .about(crate_description!())
-        .arg(Arg::with_name("file")
-            .short("f")
-            .value_name("FILE")
-            .takes_value(true))
+        .arg(
+            Arg::with_name("file")
+                .short("f")
+                .value_name("FILE")
+                .takes_value(true),
+        )
         .get_matches();
 
-    let file_name = matches.value_of("file").unwrap();
-    let tail = Tail::new(file_name.to_string());
-    let mut map: HashMap<String, bool> = HashMap::new();
+    if let Some(file_name) = matches.value_of("file") {
+        let tail = Tail::new(file_name.to_string());
+        let mut map: HashMap<String, bool> = HashMap::new();
 
-    tail.for_each(|line| {
-        let regex = Regex::new(UUID_REGEX).unwrap();
-        let maybe_capures = regex.captures(&line);
+        tail.for_each(|line| {
+            let regex = Regex::new(UUID_REGEX).unwrap();
+            let maybe_capures = regex.captures(&line);
 
-        if let Some(captures) = maybe_capures {
-            let entry = map.entry(captures.get(1).unwrap().as_str().to_string());
+            if let Some(captures) = maybe_capures {
+                let entry = map.entry(captures.get(1).unwrap().as_str().to_string());
 
-            if let Entry::Vacant(o) = entry {
-                o.insert(true);
-                println!("=> {}", line);
+                if let Entry::Vacant(o) = entry {
+                    o.insert(true);
+                    println!("=> {}", line);
+                };
             };
-        };
-    })
+        });
+    }
 }
 
 #[cfg(test)]
