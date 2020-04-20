@@ -1,19 +1,31 @@
-mod tail;
+#[macro_use]
+extern crate clap;
 
-use crate::tail::Tail;
-use std::env;
+use devtail::tail::Tail;
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 use regex::Regex;
 
+use clap::{App, Arg};
+
 // Got this from here: https://stackoverflow.com/a/6640851/233720
 const UUID_REGEX: &str = r"\[(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)\].*";
 
 fn main() {
-    let file_name = env::args().nth(1).unwrap();
-    let tail = Tail::new(file_name.clone());
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about(crate_description!())
+        .arg(Arg::with_name("file")
+            .short("f")
+            .value_name("FILE")
+            .takes_value(true))
+        .get_matches();
+
+    let file_name = matches.value_of("file").unwrap();
+    let tail = Tail::new(file_name.to_string());
     let mut map: HashMap<String, bool> = HashMap::new();
 
     tail.for_each(|line| {
