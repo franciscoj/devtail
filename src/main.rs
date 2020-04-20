@@ -8,17 +8,14 @@ use std::collections::HashMap;
 
 use regex::Regex;
 
-use clap::{App, Arg};
+use clap::{Arg};
 
 // Got this from here: https://stackoverflow.com/a/6640851/233720
 const UUID_REGEX: &str =
     r"\[(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)\].*";
 
 fn main() {
-    let matches = App::new(crate_name!())
-        .version(crate_version!())
-        .author(crate_authors!())
-        .about(crate_description!())
+    let matches = app_from_crate!()
         .arg(
             Arg::with_name("file")
                 .short("f")
