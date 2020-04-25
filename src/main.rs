@@ -7,11 +7,11 @@ use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{self, BufRead, BufReader, StdinLock};
 
 use regex::Regex;
 
-use clap::{Arg};
+use clap::Arg;
 
 // Got this from here: https://stackoverflow.com/a/6640851/233720
 const UUID_REGEX: &str =
@@ -29,22 +29,32 @@ fn main() {
 
     if let Some(file_name) = matches.value_of("file") {
         let tail = Tail::<BufReader<File>>::new(file_name.to_string());
-        let mut map: HashMap<String, bool> = HashMap::new();
 
-        tail.for_each(|line| {
-            let regex = Regex::new(UUID_REGEX).unwrap();
-            let maybe_capures = regex.captures(&line);
+        run(tail)
+    } else {
+        let stdin = io::stdin();
+        let tail = Tail::<StdinLock>::new(&stdin);
 
-            if let Some(captures) = maybe_capures {
-                let entry = map.entry(captures.get(1).unwrap().as_str().to_string());
-
-                if let Entry::Vacant(o) = entry {
-                    o.insert(true);
-                    println!("=> {}", line);
-                };
-            };
-        });
+        run(tail)
     }
+}
+
+fn run<T: BufRead>(tail: Tail<T>) {
+    let regex = Regex::new(UUID_REGEX).unwrap();
+    let mut map: HashMap<String, bool> = HashMap::new();
+
+    tail.for_each(|line| {
+        let maybe_capures = regex.captures(&line);
+
+        if let Some(captures) = maybe_capures {
+            let entry = map.entry(captures.get(1).unwrap().as_str().to_string());
+
+            if let Entry::Vacant(o) = entry {
+                o.insert(true);
+                println!("=> {}", line);
+            };
+        };
+    });
 }
 
 #[cfg(test)]
