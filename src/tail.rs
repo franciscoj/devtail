@@ -1,8 +1,9 @@
 use std::fs::File;
+use std::io::{Stdin, StdinLock};
 use std::io::prelude::*;
-use std::io::{BufRead, BufReader, Result as IOResult, SeekFrom};
+use std::io::{BufRead, BufReader, SeekFrom};
 
-pub struct Tail<T> {
+pub struct Tail<T: BufRead> {
     reader: T,
 }
 
@@ -14,13 +15,15 @@ impl Tail<BufReader<File>> {
 
         Tail { reader }
     }
+}
 
-    fn read_line(&mut self, buf: &mut String) -> IOResult<usize> {
-        self.reader.read_line(buf)
+impl<'a> Tail<StdinLock<'a>> {
+    pub fn new(stdin: &'a Stdin) -> Tail<StdinLock<'a>> {
+        Tail { reader: stdin.lock() }
     }
 }
 
-impl Iterator for Tail<BufReader<File>> {
+impl<T: BufRead> Iterator for Tail<T> {
     type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -28,7 +31,7 @@ impl Iterator for Tail<BufReader<File>> {
         let mut maybe_line = None;
 
         while let None = maybe_line {
-            if let Ok(len) = self.read_line(&mut line) {
+            if let Ok(len) = self.reader.read_line(&mut line) {
                 maybe_line = if len > 0 {
                     Some(line.clone().replace("\n", ""))
                 } else {

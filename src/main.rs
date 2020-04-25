@@ -6,6 +6,9 @@ use devtail::tail::Tail;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
+use std::fs::File;
+use std::io::BufReader;
+
 use regex::Regex;
 
 use clap::{Arg};
@@ -25,7 +28,7 @@ fn main() {
         .get_matches();
 
     if let Some(file_name) = matches.value_of("file") {
-        let tail = Tail::new(file_name.to_string());
+        let tail = Tail::<BufReader<File>>::new(file_name.to_string());
         let mut map: HashMap<String, bool> = HashMap::new();
 
         tail.for_each(|line| {
