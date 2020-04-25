@@ -1,7 +1,7 @@
 use std::fs::File;
-use std::io::{Stdin, StdinLock};
 use std::io::prelude::*;
 use std::io::{BufRead, BufReader, SeekFrom};
+use std::io::{Stdin, StdinLock};
 
 pub struct Tail<T: BufRead> {
     reader: T,
@@ -19,7 +19,9 @@ impl Tail<BufReader<File>> {
 
 impl<'a> Tail<StdinLock<'a>> {
     pub fn new(stdin: &'a Stdin) -> Tail<StdinLock<'a>> {
-        Tail { reader: stdin.lock() }
+        Tail {
+            reader: stdin.lock(),
+        }
     }
 }
 
