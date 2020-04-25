@@ -22,7 +22,7 @@ I would also like to have some other dev niceties like:
 * Good keyboard shortcuts. It all has to work TUI style, a la VIM or emacs or
     you know... Terminal stuff.
 * Others that I don't know yet!
-* Allow to receive logs either from a file `tail -f` or from a pipe (do you do
+* [X] Allow to receive logs either from a file `tail -f` or from a pipe (do you do
     that with standard input? :shrug:)
 * Allow to configure some of those so that It is not only useful to rails
     projects.
