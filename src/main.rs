@@ -1,17 +1,12 @@
 #[macro_use]
 extern crate clap;
 
-use devtail::tail::Tail;
-
+use clap::Arg;
+use devtail::tail::{Tail, TailF, TailS};
+use regex::Regex;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
-
-use std::fs::File;
-use std::io::{self, BufRead, BufReader, StdinLock};
-
-use regex::Regex;
-
-use clap::Arg;
+use std::io::{self, BufRead};
 
 // Got this from here: https://stackoverflow.com/a/6640851/233720
 const UUID_REGEX: &str =
@@ -28,12 +23,12 @@ fn main() {
         .get_matches();
 
     if let Some(file_name) = matches.value_of("file") {
-        let tail = Tail::<BufReader<File>>::new(file_name.to_string());
+        let tail = TailF::new(file_name.to_string());
 
         run(tail)
     } else {
         let stdin = io::stdin();
-        let tail = Tail::<StdinLock>::new(&stdin);
+        let tail = TailS::new(&stdin);
 
         run(tail)
     }

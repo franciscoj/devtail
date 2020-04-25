@@ -7,8 +7,11 @@ pub struct Tail<T: BufRead> {
     reader: T,
 }
 
-impl Tail<BufReader<File>> {
-    pub fn new(file_name: String) -> Tail<BufReader<File>> {
+pub type TailF = Tail<BufReader<File>>;
+pub type TailS<'a> = Tail<StdinLock<'a>>;
+
+impl TailF {
+    pub fn new(file_name: String) -> Self {
         let file = File::open(file_name.clone()).unwrap();
         let mut reader = BufReader::new(file);
         reader.seek(SeekFrom::End(0)).unwrap();
@@ -17,8 +20,8 @@ impl Tail<BufReader<File>> {
     }
 }
 
-impl<'a> Tail<StdinLock<'a>> {
-    pub fn new(stdin: &'a Stdin) -> Tail<StdinLock<'a>> {
+impl<'a> TailS<'a> {
+    pub fn new(stdin: &'a Stdin) -> Self {
         Tail {
             reader: stdin.lock(),
         }
