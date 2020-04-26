@@ -1,2 +1,2 @@
 pub mod tail;
-mod log;
+pub mod log;

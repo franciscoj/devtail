@@ -1,21 +1,40 @@
 #[derive(Debug, PartialEq)]
-enum State {
+pub enum State {
     Unknown,
     // Success,
     // Error,
 }
 
-struct Log<'a> {
-    state: State,
+/// Represents a multi-line entry on a log.
+///
+/// It is by default empty and has `Unknown` state. Its state represents the state of the log. E.g.
+/// a 200 OK on an HTTP request might turn the state into `Success` while a 500 status might turn
+/// it into `Error`
+///
+/// # Examples
+///
+/// ```
+/// # use devtail::log::{Log, State};
+/// let log = Log::new();
+///
+/// assert!(log.is_empty());
+/// assert_eq!(log.state, State::Unknown);
+/// ```
+pub struct Log<'a> {
+    pub state: State,
     entries: Vec<&'a str>,
 }
 
 impl<'a> Log<'a> {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Log {
             state: State::Unknown,
             entries: Vec::new(),
         }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.entries.is_empty()
     }
 
     fn add(&mut self, line: &'a str) {
@@ -26,14 +45,6 @@ impl<'a> Log<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_new() {
-        let log = Log::new();
-
-        assert_eq!(log.state, State::Unknown);
-        assert!(log.entries.is_empty())
-    }
 
     #[test]
     fn test_add_line() {
