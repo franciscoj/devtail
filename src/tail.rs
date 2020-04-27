@@ -79,32 +79,3 @@ impl<T: BufRead> Iterator for Tail<T> {
         maybe_line
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use regex::Regex;
-
-    #[test]
-    fn regex_matches_uuid() {
-        let line = r#"[df7f9091-18d5-4002-91c9-e084516526ab] Started POST "/visits" for 127.0.0.1 at 2020-04-18 17:50:07 +0200"#;
-        let regex = Regex::new(super::UUID_REGEX).unwrap();
-        let captures = regex.captures(&line).unwrap();
-
-        assert_eq!(
-            captures.get(1).unwrap().as_str(),
-            "df7f9091-18d5-4002-91c9-e084516526ab"
-        );
-    }
-
-    #[test]
-    fn regex_matches_uuid_on_line_with_brackets() {
-        let line = r#"[be155bd9-587d-468a-994f-441815edc79d]   CACHE MyModel Load (0.0ms)  SELECT  `my_models`.* FROM `my_models` WHERE `my_models`.`id` = 1 LIMIT 1  [["id", 1], ["LIMIT", 1]]"#;
-        let regex = Regex::new(super::UUID_REGEX).unwrap();
-        let captures = regex.captures(&line).unwrap();
-
-        assert_eq!(
-            captures.get(1).unwrap().as_str(),
-            "be155bd9-587d-468a-994f-441815edc79d"
-        );
-    }
-}

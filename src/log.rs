@@ -37,7 +37,7 @@ impl<'a> Log<'a> {
         self.entries.is_empty()
     }
 
-    fn add(&mut self, line: &'a str) {
+    pub fn add(&mut self, line: &'a str) {
         self.entries.push(line);
     }
 }
