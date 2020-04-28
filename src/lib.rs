@@ -1,6 +1,7 @@
 pub mod tail;
 pub mod log;
 pub mod parser;
+pub mod entry;
 
 #[derive(Debug, PartialEq)]
 pub enum HttpStatus {
