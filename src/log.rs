@@ -1,34 +1,23 @@
-#[derive(Debug, PartialEq)]
-pub enum State {
-    Unknown,
-    // Success,
-    // Error,
-}
-
-/// Represents a multi-line entry on a log.
+/// Represents a collection of all the different entries of the log.
 ///
-/// It is by default empty and has `Unknown` state. Its state represents the state of the log. E.g.
-/// a 200 OK on an HTTP request might turn the state into `Success` while a 500 status might turn
-/// it into `Error`
+/// It is empty by default. When a new line is added it gets added into the right entry that needs
+/// to hold it so that all related lines are together.
 ///
 /// # Examples
 ///
 /// ```
-/// # use devtail::log::{Log, State};
+/// # use devtail::log::Log;
 /// let log = Log::new();
 ///
 /// assert!(log.is_empty());
-/// assert_eq!(log.state, State::Unknown);
 /// ```
 pub struct Log<'a> {
-    pub state: State,
     entries: Vec<&'a str>,
 }
 
 impl<'a> Log<'a> {
     pub fn new() -> Self {
         Log {
-            state: State::Unknown,
             entries: Vec::new(),
         }
     }
