@@ -1,3 +1,6 @@
+use super::{parser::parse, entry::Entry as LogEntry};
+use std::collections::{HashMap, hash_map::Entry as MapEntry};
+
 /// Represents a collection of all the different entries of the log.
 ///
 /// It is empty by default. When a new line is added it gets added into the right entry that needs
@@ -12,13 +15,13 @@
 /// assert!(log.is_empty());
 /// ```
 pub struct Log<'a> {
-    entries: Vec<&'a str>,
+    entries: HashMap<&'a str, LogEntry<'a>>,
 }
 
 impl<'a> Log<'a> {
     pub fn new() -> Self {
         Log {
-            entries: Vec::new(),
+            entries: HashMap::new(),
         }
     }
 
@@ -27,22 +30,36 @@ impl<'a> Log<'a> {
     }
 
     pub fn add(&mut self, line: &'a str) {
-        self.entries.push(line);
+        let (id, _) = parse(line).unwrap();
+        let map_entry = self.entries.entry(id);
+
+        if let MapEntry::Vacant(entries) = map_entry {
+            let entry = LogEntry::new(line);
+            entries.insert(entry);
+        } else if let MapEntry::Occupied(mut entries) = map_entry {
+            let entry = entries.get_mut();
+
+            entry.add(line);
+        };
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::HttpStatus;
 
     #[test]
-    fn test_add_line() {
+    fn test_add_lines() {
         let mut log = Log::new();
-        let line = "A Line";
+        log.add("[00000000-0000-0000-0000-000000000000] A line");
+        log.add("[00000000-0000-0000-0000-000000000000] Completed 200");
+        log.add("[11111111-1111-1111-1111-111111111111] Other line");
+        log.add("[11111111-1111-1111-1111-111111111111] Completed 302");
 
-        log.add(line);
+        let entry = log.entries.get("00000000-0000-0000-0000-000000000000").unwrap();
 
-        assert_eq!(log.entries.len(), 1);
-        assert_eq!(log.entries.pop(), Some("A Line"));
+        assert_eq!(log.entries.len(), 2);
+        assert_eq!(entry.status, HttpStatus::Success(200));
     }
 }
