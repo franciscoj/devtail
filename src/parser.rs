@@ -46,7 +46,10 @@ mod tests {
         let line = r#"[df7f9091-18d5-4002-91c9-e084516526ab] Started POST "/visits" for 127.0.0.1 at 2020-04-18 17:50:07 +0200"#;
 
         assert_eq!(
-            ("df7f9091-18d5-4002-91c9-e084516526ab", HttpStatus::Unknown(0)),
+            (
+                "df7f9091-18d5-4002-91c9-e084516526ab",
+                HttpStatus::Unknown(0)
+            ),
             parse(line).unwrap()
         );
     }
@@ -56,7 +59,10 @@ mod tests {
         let line = r#"[be155bd9-587d-468a-994f-441815edc79d]  CACHE MyModel Load (0.0ms)  SELECT  `my_models`.* FROM `my_models` WHERE `my_models`.`id` = 1 LIMIT 1  [["id", 1], ["LIMIT", 1]]"#;
 
         assert_eq!(
-            ("be155bd9-587d-468a-994f-441815edc79d", HttpStatus::Unknown(0)),
+            (
+                "be155bd9-587d-468a-994f-441815edc79d",
+                HttpStatus::Unknown(0)
+            ),
             parse(line).unwrap()
         );
     }
@@ -66,7 +72,10 @@ mod tests {
         let line = r"[df7f9091-18d5-4002-91c9-e084516526ab] Completed 200 OK in 21ms (Views: 0.1ms | ActiveRecord: 8.0ms)";
 
         assert_eq!(
-            ("df7f9091-18d5-4002-91c9-e084516526ab", HttpStatus::Success(200)),
+            (
+                "df7f9091-18d5-4002-91c9-e084516526ab",
+                HttpStatus::Success(200)
+            ),
             parse(line).unwrap()
         )
     }

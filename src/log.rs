@@ -1,5 +1,5 @@
-use super::{parser::parse, entry::Entry as LogEntry};
-use std::collections::{HashMap, hash_map::Entry as MapEntry};
+use super::{entry::Entry as LogEntry, parser::parse};
+use std::collections::{hash_map::Entry as MapEntry, HashMap};
 
 /// Represents a collection of all the different entries of the log.
 ///
@@ -57,7 +57,10 @@ mod tests {
         log.add("[11111111-1111-1111-1111-111111111111] Other line");
         log.add("[11111111-1111-1111-1111-111111111111] Completed 302");
 
-        let entry = log.entries.get("00000000-0000-0000-0000-000000000000").unwrap();
+        let entry = log
+            .entries
+            .get("00000000-0000-0000-0000-000000000000")
+            .unwrap();
 
         assert_eq!(log.entries.len(), 2);
         assert_eq!(entry.status, HttpStatus::Success(200));

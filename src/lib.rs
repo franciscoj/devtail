@@ -1,7 +1,7 @@
-pub mod tail;
+pub mod entry;
 pub mod log;
 pub mod parser;
-pub mod entry;
+pub mod tail;
 
 #[derive(Debug, PartialEq)]
 // TODO: Map HTTP states from 100..=199
@@ -18,6 +18,5 @@ pub enum HttpStatus {
     /// 0 by default.
     ///
     /// In case it receives an error < 200 or > 600 the value comes here.
-    Unknown(u16)
+    Unknown(u16),
 }
-
