@@ -40,7 +40,7 @@ impl<T: BufRead> Tail<T> {
         let regex = Regex::new(UUID_REGEX).unwrap();
         let mut map: HashMap<String, bool> = HashMap::new();
 
-        self.for_each(|line| {
+        for line in self {
             let maybe_capures = regex.captures(&line);
 
             if let Some(captures) = maybe_capures {
@@ -51,7 +51,7 @@ impl<T: BufRead> Tail<T> {
                     println!("=> {}", line);
                 };
             };
-        });
+        }
     }
 }
 
