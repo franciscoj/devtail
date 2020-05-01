@@ -17,11 +17,11 @@ fn main() {
     if let Some(file_name) = matches.value_of("file") {
         let tail = TailF::new(file_name.to_string());
 
-        tail.run()
+        devtail::cmd::run(tail);
     } else {
         let stdin = std::io::stdin();
         let tail = TailS::new(&stdin);
 
-        tail.run()
+        devtail::cmd::run(tail);
     }
 }
