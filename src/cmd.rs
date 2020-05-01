@@ -6,6 +6,8 @@ pub fn run<T: BufRead>(tail: Tail<T>) {
     let mut log = Log::new();
 
     for line in tail {
-        log.add(line);
+        if let Some(id) = log.add(line.clone()) {
+            log.print(id);
+        }
     }
 }

@@ -57,4 +57,8 @@ impl Entry {
         self.lines.push(line);
         self.status = status;
     }
+
+    pub fn print(&self) {
+        println!("{}", self.lines[0]);
+    }
 }

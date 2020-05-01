@@ -29,18 +29,31 @@ impl Log {
         self.entries.is_empty()
     }
 
-    pub fn add(&mut self, line: String) {
-        let (id, _) = parse(&line).unwrap();
-        let map_entry = self.entries.entry(id);
+    pub fn add(&mut self, line: String) -> Option<String> {
+        let (id, _) = parse(&line)?;
+        let map_entry = self.entries.entry(id.clone());
 
         if let MapEntry::Vacant(entries) = map_entry {
             let entry = LogEntry::new(line);
+
             entries.insert(entry);
+
+            Some(id)
         } else if let MapEntry::Occupied(mut entries) = map_entry {
             let entry = entries.get_mut();
 
             entry.add(line);
-        };
+
+            None
+        } else {
+            None
+        }
+    }
+
+    pub fn print(&self, id: String) {
+        let entry = self.entries.get(&id).unwrap();
+
+        entry.print();
     }
 }
 
