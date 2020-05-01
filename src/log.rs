@@ -14,11 +14,11 @@ use std::collections::{hash_map::Entry as MapEntry, HashMap};
 ///
 /// assert!(log.is_empty());
 /// ```
-pub struct Log<'a> {
-    entries: HashMap<&'a str, LogEntry<'a>>,
+pub struct Log {
+    entries: HashMap<String, LogEntry>,
 }
 
-impl<'a> Log<'a> {
+impl Log {
     pub fn new() -> Self {
         Log {
             entries: HashMap::new(),
@@ -29,8 +29,8 @@ impl<'a> Log<'a> {
         self.entries.is_empty()
     }
 
-    pub fn add(&mut self, line: &'a str) {
-        let (id, _) = parse(line).unwrap();
+    pub fn add(&mut self, line: String) {
+        let (id, _) = parse(&line).unwrap();
         let map_entry = self.entries.entry(id);
 
         if let MapEntry::Vacant(entries) = map_entry {
@@ -52,10 +52,18 @@ mod tests {
     #[test]
     fn test_add_lines() {
         let mut log = Log::new();
-        log.add("[00000000-0000-0000-0000-000000000000] A line");
-        log.add("[00000000-0000-0000-0000-000000000000] Completed 200");
-        log.add("[11111111-1111-1111-1111-111111111111] Other line");
-        log.add("[11111111-1111-1111-1111-111111111111] Completed 302");
+        log.add(String::from(
+            "[00000000-0000-0000-0000-000000000000] A line",
+        ));
+        log.add(String::from(
+            "[00000000-0000-0000-0000-000000000000] Completed 200",
+        ));
+        log.add(String::from(
+            "[11111111-1111-1111-1111-111111111111] Other line",
+        ));
+        log.add(String::from(
+            "[11111111-1111-1111-1111-111111111111] Completed 302",
+        ));
 
         let entry = log
             .entries

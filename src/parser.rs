@@ -7,13 +7,13 @@ const UUID_REGEX: &str =
 
 const HTTP_STATUS_REGEX: &str = r"Completed ([1-5]+[0-9]{2})";
 
-type ParseResult<'a> = (&'a str, HttpStatus);
+type ParseResult<'a> = (String, HttpStatus);
 
-pub fn parse(line: &str) -> Option<ParseResult<'_>> {
+pub fn parse(line: &String) -> Option<ParseResult<'_>> {
     let uuid_regex = Regex::new(UUID_REGEX).unwrap();
     let captures = uuid_regex.captures(&line)?;
     let id_match = captures.get(1)?;
-    let id = id_match.as_str();
+    let id = String::from(id_match.as_str());
 
     if let Some(http_status) = parse_http_status(line) {
         match http_status {
@@ -28,7 +28,7 @@ pub fn parse(line: &str) -> Option<ParseResult<'_>> {
     }
 }
 
-fn parse_http_status(line: &str) -> Option<u16> {
+fn parse_http_status(line: &String) -> Option<u16> {
     let http_status_regex = Regex::new(HTTP_STATUS_REGEX).unwrap();
     let captures = http_status_regex.captures(&line)?;
     let status_match = captures.get(1)?;
@@ -43,40 +43,46 @@ mod tests {
 
     #[test]
     fn parse_uuid() {
-        let line = r#"[df7f9091-18d5-4002-91c9-e084516526ab] Started POST "/visits" for 127.0.0.1 at 2020-04-18 17:50:07 +0200"#;
+        let line = String::from(
+            r#"[df7f9091-18d5-4002-91c9-e084516526ab] Started POST "/visits" for 127.0.0.1 at 2020-04-18 17:50:07 +0200"#,
+        );
 
         assert_eq!(
             (
-                "df7f9091-18d5-4002-91c9-e084516526ab",
+                String::from("df7f9091-18d5-4002-91c9-e084516526ab"),
                 HttpStatus::Unknown(0)
             ),
-            parse(line).unwrap()
+            parse(&line).unwrap()
         );
     }
 
     #[test]
     fn parse_uuid_on_line_with_brackets() {
-        let line = r#"[be155bd9-587d-468a-994f-441815edc79d]  CACHE MyModel Load (0.0ms)  SELECT  `my_models`.* FROM `my_models` WHERE `my_models`.`id` = 1 LIMIT 1  [["id", 1], ["LIMIT", 1]]"#;
+        let line = String::from(
+            r#"[be155bd9-587d-468a-994f-441815edc79d]  CACHE MyModel Load (0.0ms)  SELECT  `my_models`.* FROM `my_models` WHERE `my_models`.`id` = 1 LIMIT 1  [["id", 1], ["LIMIT", 1]]"#,
+        );
 
         assert_eq!(
             (
-                "be155bd9-587d-468a-994f-441815edc79d",
+                String::from("be155bd9-587d-468a-994f-441815edc79d"),
                 HttpStatus::Unknown(0)
             ),
-            parse(line).unwrap()
+            parse(&line).unwrap()
         );
     }
 
     #[test]
     fn parse_uuid_and_status() {
-        let line = r"[df7f9091-18d5-4002-91c9-e084516526ab] Completed 200 OK in 21ms (Views: 0.1ms | ActiveRecord: 8.0ms)";
+        let line = String::from(
+            r"[df7f9091-18d5-4002-91c9-e084516526ab] Completed 200 OK in 21ms (Views: 0.1ms | ActiveRecord: 8.0ms)",
+        );
 
         assert_eq!(
             (
-                "df7f9091-18d5-4002-91c9-e084516526ab",
+                String::from("df7f9091-18d5-4002-91c9-e084516526ab"),
                 HttpStatus::Success(200)
             ),
-            parse(line).unwrap()
+            parse(&line).unwrap()
         )
     }
 }

@@ -2,28 +2,28 @@ use super::{parser::parse, HttpStatus};
 
 /// An `Entry` is a list of lines with the same UUID + he status that signals the end of the
 /// request.
-pub struct Entry<'a> {
-    pub id: &'a str,
-    pub lines: Vec<&'a str>,
+pub struct Entry {
+    pub id: String,
+    pub lines: Vec<String>,
     pub status: HttpStatus,
 }
 
-impl<'a> Entry<'a> {
+impl Entry {
     /// Builds a new `Entry` from a log line with an UUID.
     ///
     /// # Examples
     ///
     /// ```
     /// # use devtail::{HttpStatus, entry::Entry};
-    /// let line = "[00000000-0000-0000-0000-000000000000] Some initial line";
+    /// let line = String::from("[00000000-0000-0000-0000-000000000000] Some initial line");
     /// let entry = Entry::new(line);
     ///
-    /// assert_eq!(entry.id, "00000000-0000-0000-0000-000000000000");
+    /// assert_eq!(entry.id, String::from("00000000-0000-0000-0000-000000000000"));
     /// assert_eq!(entry.status, HttpStatus::Unknown(0));
     /// assert_eq!(entry.lines.len(), 1);
     /// ```
-    pub fn new(line: &'a str) -> Self {
-        let (id, status) = parse(line).unwrap();
+    pub fn new(line: String) -> Self {
+        let (id, status) = parse(&line).unwrap();
 
         Self {
             id,
@@ -41,16 +41,18 @@ impl<'a> Entry<'a> {
     ///
     /// ```
     /// # use devtail::{HttpStatus, entry::Entry};
-    /// let mut entry = Entry::new("[00000000-0000-0000-0000-000000000000] Some initial line");
-    /// let line = "[00000000-0000-0000-0000-000000000000] Completed 201";
+    /// let mut entry = Entry::new(
+    ///    String::from("[00000000-0000-0000-0000-000000000000] Some initial line")
+    /// );
+    /// let line = String::from("[00000000-0000-0000-0000-000000000000] Completed 201");
     ///
     /// entry.add(line);
     ///
     /// assert_eq!(entry.status, HttpStatus::Success(201));
     /// assert_eq!(entry.lines.len(), 2);
     /// ```
-    pub fn add(&mut self, line: &'a str) {
-        let (_, status) = parse(line).unwrap();
+    pub fn add(&mut self, line: String) {
+        let (_, status) = parse(&line).unwrap();
 
         self.lines.push(line);
         self.status = status;
