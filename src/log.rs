@@ -3,9 +3,6 @@ use std::collections::{hash_map::Entry as MapEntry, HashMap};
 
 /// Represents a collection of all the different entries of the log.
 ///
-/// It is empty by default. When a new line is added it gets added into the right entry that needs
-/// to hold it so that all related lines are together.
-///
 /// # Examples
 ///
 /// ```
@@ -29,6 +26,12 @@ impl Log {
         self.entries.is_empty()
     }
 
+    /// Adds a new line to a log.
+    ///
+    /// When the log already has an entry for that UUID it gets appended. If not, it creates a new
+    /// entry.
+    ///
+    /// In case it has added an entry it returns `Option<String>`
     pub fn add(&mut self, line: String) -> Option<String> {
         let (id, _) = parse(&line)?;
         let map_entry = self.entries.entry(id.clone());
