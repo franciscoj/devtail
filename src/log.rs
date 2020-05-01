@@ -36,20 +36,18 @@ impl Log {
         let (id, _) = parse(&line)?;
         let map_entry = self.entries.entry(id.clone());
 
-        if let MapEntry::Vacant(entries) = map_entry {
-            let entry = LogEntry::new(line);
+        match map_entry {
+            MapEntry::Vacant(entries) => {
+                entries.insert(LogEntry::new(line));
 
-            entries.insert(entry);
+                Some(id)
+            }
 
-            Some(id)
-        } else if let MapEntry::Occupied(mut entries) = map_entry {
-            let entry = entries.get_mut();
+            MapEntry::Occupied(mut entries) => {
+                entries.get_mut().add(line);
 
-            entry.add(line);
-
-            None
-        } else {
-            None
+                None
+            }
         }
     }
 
