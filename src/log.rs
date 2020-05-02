@@ -55,7 +55,7 @@ impl Log {
             MapEntry::Occupied(mut entries) => {
                 entries.get_mut().add(line);
 
-                None
+                Some(id)
             }
         }
     }

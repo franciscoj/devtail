@@ -1,16 +1,49 @@
 use super::entry::Entry;
 use super::log::Log;
+use super::HttpStatus;
 use std::convert::TryFrom;
+use termion::{clear, color, cursor, terminal_size};
 
 type Size = (u16, u16);
 
-struct Screen {
+pub struct Screen {
     size: Size,
 }
 
 impl Screen {
-    pub fn new(size: Size) -> Self {
+    pub fn new() -> Self {
+        Self {
+            size: terminal_size().unwrap(),
+        }
+    }
+
+    pub fn new_with_size(size: Size) -> Self {
         Self { size }
+    }
+
+    pub fn clear(&self) {
+        println!("{}{}", clear::All, cursor::Goto(1, 1));
+    }
+
+    pub fn print(&self, log: &Log, id: String) {
+        if let Some(line) = self.line_nr_for(&log, id.clone()) {
+            let entry = log.get(id.clone()).unwrap();
+            let color = self.color_for(entry);
+
+            print!("{}", cursor::Goto(1, line));
+            print!("{}", color::Fg(color));
+            entry.print();
+        }
+    }
+
+    fn color_for(&self, entry: &Entry) -> color::Rgb {
+        match entry.status {
+            HttpStatus::Success(_) => color::Rgb(0, 255, 0),
+            HttpStatus::Redirect(_) => color::Rgb(0, 0, 255),
+            HttpStatus::ClientError(_) => color::Rgb(255, 0, 0),
+            HttpStatus::ServerError(_) => color::Rgb(255, 0, 0),
+            HttpStatus::Unknown(_) => color::Rgb(255, 255, 0),
+        }
     }
 
     fn line_nr_for(&self, log: &Log, id: String) -> Option<u16> {
@@ -42,7 +75,7 @@ mod tests {
         let uuid1 = log.add(log_start!("1")).unwrap();
         let size = (1, 2);
 
-        let screen = Screen::new(size);
+        let screen = Screen::new_with_size(size);
 
         assert_eq!(screen.line_nr_for(&log, uuid0), Some(1));
         assert_eq!(screen.line_nr_for(&log, uuid1), Some(2));
@@ -59,7 +92,7 @@ mod tests {
 
         let size = (1, 2);
 
-        let screen = Screen::new(size);
+        let screen = Screen::new_with_size(size);
 
         assert_eq!(screen.line_nr_for(&log, uuids[0].clone()), None);
         assert_eq!(screen.line_nr_for(&log, uuids[1].clone()), Some(1));
@@ -81,7 +114,7 @@ mod tests {
         ];
         let size = (1, 2);
 
-        let screen = Screen::new(size);
+        let screen = Screen::new_with_size(size);
 
         assert_eq!(screen.line_nr_for(&log, uuids[3].clone()), None);
         assert_eq!(screen.line_nr_for(&log, uuids[7].clone()), Some(2));

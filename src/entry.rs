@@ -1,7 +1,6 @@
 extern crate termion;
 
 use super::{parser::parse, HttpStatus};
-use termion::color;
 
 /// An `Entry` is a list of lines with the same UUID + he status that signals the end of the
 /// request.
@@ -66,6 +65,6 @@ impl Entry {
     }
 
     pub fn print(&self) {
-        println!("{}{}", color::Fg(color::Yellow), self.lines[0]);
+        println!("{}", self.lines[0]);
     }
 }
