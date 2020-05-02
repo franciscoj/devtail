@@ -2,6 +2,7 @@
 extern crate clap;
 
 use clap::Arg;
+use devtail::cmd;
 use devtail::tail::{TailF, TailS};
 
 fn main() {
@@ -17,11 +18,11 @@ fn main() {
     if let Some(file_name) = matches.value_of("file") {
         let tail = TailF::new(file_name.to_string());
 
-        devtail::cmd::run(tail);
+        cmd::run(tail);
     } else {
         let stdin = std::io::stdin();
         let tail = TailS::new(&stdin);
 
-        devtail::cmd::run(tail);
+        cmd::run(tail);
     }
 }
