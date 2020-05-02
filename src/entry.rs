@@ -9,6 +9,7 @@ pub struct Entry {
     pub id: String,
     pub lines: Vec<String>,
     pub status: HttpStatus,
+    pub order: usize,
 }
 
 impl Entry {
@@ -19,18 +20,20 @@ impl Entry {
     /// ```
     /// # use devtail::{HttpStatus, entry::Entry};
     /// let line = String::from("[00000000-0000-0000-0000-000000000000] Some initial line");
-    /// let entry = Entry::new(line);
+    /// let entry = Entry::new(line, 0);
     ///
     /// assert_eq!(entry.id, String::from("00000000-0000-0000-0000-000000000000"));
     /// assert_eq!(entry.status, HttpStatus::Unknown(0));
     /// assert_eq!(entry.lines.len(), 1);
+    /// assert_eq!(entry.order, 0)
     /// ```
-    pub fn new(line: String) -> Self {
+    pub fn new(line: String, order: usize) -> Self {
         let (id, status) = parse(&line).unwrap();
 
         Self {
             id,
             status,
+            order,
             lines: vec![line],
         }
     }
@@ -45,7 +48,8 @@ impl Entry {
     /// ```
     /// # use devtail::{HttpStatus, entry::Entry};
     /// let mut entry = Entry::new(
-    ///    String::from("[00000000-0000-0000-0000-000000000000] Some initial line")
+    ///    String::from("[00000000-0000-0000-0000-000000000000] Some initial line"),
+    ///    0
     /// );
     /// let line = String::from("[00000000-0000-0000-0000-000000000000] Completed 201");
     ///

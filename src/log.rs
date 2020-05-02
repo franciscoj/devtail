@@ -26,6 +26,14 @@ impl Log {
         self.entries.is_empty()
     }
 
+    pub fn len(&self) -> usize {
+        self.entries.len()
+    }
+
+    pub fn get(&self, id: String) -> Option<&LogEntry> {
+        self.entries.get(&id)
+    }
+
     /// Adds a new line to a log.
     ///
     /// When the log already has an entry for that UUID it gets appended. If not, it creates a new
@@ -34,11 +42,12 @@ impl Log {
     /// In case it has added an entry it returns `Option<String>`
     pub fn add(&mut self, line: String) -> Option<String> {
         let (id, _) = parse(&line)?;
+        let len = self.entries.len();
         let map_entry = self.entries.entry(id.clone());
 
         match map_entry {
             MapEntry::Vacant(entries) => {
-                entries.insert(LogEntry::new(line));
+                entries.insert(LogEntry::new(line, len));
 
                 Some(id)
             }
@@ -87,7 +96,7 @@ mod tests {
             .unwrap();
 
         assert_eq!(id, String::from("00000000-0000-0000-0000-000000000000"));
-        assert_eq!(log.entries.len(), 2);
+        assert_eq!(log.len(), 2);
         assert_eq!(entry.status, HttpStatus::Success(200));
     }
 }
