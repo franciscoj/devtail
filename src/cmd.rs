@@ -1,8 +1,8 @@
 extern crate termion;
 
 use super::log::Log;
-use super::tail::Tail;
 use super::screen::Screen;
+use super::tail::Tail;
 use std::io::BufRead;
 
 /// Runs a `Tail`.
