@@ -75,10 +75,10 @@ mod tests {
     #[test]
     fn test_add_lines() {
         let mut log = Log::new();
-        let id = log.add(String::from(log_start!("0"))).unwrap();
-        log.add(String::from(log_end!("0")));
-        log.add(String::from(log_start!("1")));
-        log.add(String::from(log_end!("1")));
+        let id = log.add(log_start!("0")).unwrap();
+        log.add(log_end!("0"));
+        log.add(log_start!("1"));
+        log.add(log_end!("1"));
 
         let entry = log.entries.get(&uuid!("0")).unwrap();
 

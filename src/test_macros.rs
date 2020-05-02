@@ -6,7 +6,7 @@ macro_rules! uuid {
 
 macro_rules! log_line {
     ($id:expr, $text:expr) => {{
-        format!("[{}] {}", uuid!($id), $text)
+        String::from(format!("[{}] {}", uuid!($id), $text))
     }};
 }
 
