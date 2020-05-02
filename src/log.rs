@@ -42,7 +42,7 @@ impl Log {
     /// In case it has added an entry it returns `Option<String>`
     pub fn add(&mut self, line: String) -> Option<String> {
         let (id, _) = parse(&line)?;
-        let len = self.entries.len();
+        let len = self.entries.len() + 1;
         let map_entry = self.entries.entry(id.clone());
 
         match map_entry {
