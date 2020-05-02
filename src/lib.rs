@@ -1,3 +1,6 @@
+#[macro_use]
+mod test_macros;
+
 pub mod cmd;
 pub mod entry;
 pub mod log;

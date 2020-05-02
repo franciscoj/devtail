@@ -75,27 +75,14 @@ mod tests {
     #[test]
     fn test_add_lines() {
         let mut log = Log::new();
-        let id = log
-            .add(String::from(
-                "[00000000-0000-0000-0000-000000000000] A line",
-            ))
-            .unwrap();
-        log.add(String::from(
-            "[00000000-0000-0000-0000-000000000000] Completed 200",
-        ));
-        log.add(String::from(
-            "[11111111-1111-1111-1111-111111111111] Other line",
-        ));
-        log.add(String::from(
-            "[11111111-1111-1111-1111-111111111111] Completed 302",
-        ));
+        let id = log.add(String::from(log_start!("0"))).unwrap();
+        log.add(String::from(log_end!("0")));
+        log.add(String::from(log_start!("1")));
+        log.add(String::from(log_end!("1")));
 
-        let entry = log
-            .entries
-            .get("00000000-0000-0000-0000-000000000000")
-            .unwrap();
+        let entry = log.entries.get(&uuid!("0")).unwrap();
 
-        assert_eq!(id, String::from("00000000-0000-0000-0000-000000000000"));
+        assert_eq!(id, String::from(uuid!("0")));
         assert_eq!(log.len(), 2);
         assert_eq!(entry.status, HttpStatus::Success(200));
     }

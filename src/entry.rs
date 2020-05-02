@@ -19,7 +19,7 @@ impl Entry {
     ///
     /// ```
     /// # use devtail::{HttpStatus, entry::Entry};
-    /// let line = String::from("[00000000-0000-0000-0000-000000000000] Some initial line");
+    /// let line = String::from("[00000000-0000-0000-0000-000000000000] GET /users");
     /// let entry = Entry::new(line, 0);
     ///
     /// assert_eq!(entry.id, String::from("00000000-0000-0000-0000-000000000000"));
@@ -48,7 +48,7 @@ impl Entry {
     /// ```
     /// # use devtail::{HttpStatus, entry::Entry};
     /// let mut entry = Entry::new(
-    ///    String::from("[00000000-0000-0000-0000-000000000000] Some initial line"),
+    ///    String::from("[00000000-0000-0000-0000-000000000000] GET /users"),
     ///    0
     /// );
     /// let line = String::from("[00000000-0000-0000-0000-000000000000] Completed 201");
