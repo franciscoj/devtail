@@ -64,7 +64,14 @@ impl Entry {
         self.status = status;
     }
 
-    pub fn print(&self) {
-        println!("{}", self.lines[0]);
+    // TODO: I'm still not sure that this belongs here. Right now screen takes care of the styling
+    // while this prints. Seems like some kind of "presenter" or "view" could be needed but I'm
+    // still not sure that's something that can be needed.
+    /// Prints the first line on this `Entry`.
+    pub fn print(&self, cols: &usize) {
+        let mut line = self.lines[0].clone();
+        line.truncate(*cols - 15);
+
+        println!("[{}]{}", self.order, line);
     }
 }
