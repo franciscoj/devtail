@@ -29,7 +29,27 @@ impl Screen {
         println!("{}{}", clear::All, cursor::Goto(1, 1));
     }
 
-    pub fn print(&self, log: &Log, id: String) {
+    /// Prints a log by printing the last lines that fit in the screen.
+    pub fn print_log(&self, log: &Log) {
+        let (_c, r) = self.size;
+        let rows = usize::try_from(r).unwrap();
+        let len = log.len();
+        let range = if len <= rows {
+            0..len
+        } else {
+            let start = len - rows;
+
+            start..len
+        };
+
+        for i in range {
+            let id = log.entry_ids.get(i).unwrap();
+
+            self.print(&log, id.clone());
+        }
+    }
+
+    fn print(&self, log: &Log, id: String) {
         if let Some(line) = self.line_nr_for(&log, id.clone()) {
             let entry = log.get(id.clone()).unwrap();
             let color = self.color_for(entry);

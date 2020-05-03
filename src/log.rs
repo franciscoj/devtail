@@ -12,6 +12,8 @@ use std::collections::{hash_map::Entry as MapEntry, HashMap};
 /// assert!(log.is_empty());
 /// ```
 pub struct Log {
+    /// A list of all the UUIDs on this log.
+    pub entry_ids: Vec<String>,
     entries: HashMap<String, LogEntry>,
 }
 
@@ -19,6 +21,7 @@ impl Log {
     pub fn new() -> Self {
         Log {
             entries: HashMap::new(),
+            entry_ids: vec![],
         }
     }
 
@@ -48,6 +51,7 @@ impl Log {
         match map_entry {
             MapEntry::Vacant(entries) => {
                 entries.insert(LogEntry::new(line, len));
+                self.entry_ids.push(id.clone());
 
                 Some(id)
             }
