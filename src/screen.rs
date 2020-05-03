@@ -53,11 +53,11 @@ impl Screen {
         if let Some(line) = self.line_nr_for(&log, id.clone()) {
             let entry = log.get(id.clone()).unwrap();
             let color = self.color_for(entry);
-            let (cols, rows) = self.size;
+            let (cols, _rows) = self.size;
 
             print!("{}", cursor::Goto(1, line));
             print!("{}", color::Fg(color));
-            print!("[{}/{}:s{}]", line, rows, log.len());
+            // print!("[{}/{}:s{}]", line, rows, log.len());
             entry.print(&usize::try_from(cols).unwrap());
         }
     }

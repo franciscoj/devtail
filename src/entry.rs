@@ -72,6 +72,7 @@ impl Entry {
         let mut line = self.lines[0].clone();
         line.truncate(*cols - 15);
 
-        println!("[{}]{}", self.order, line);
+        // print!("[{}]", self.order);
+        println!("{}", line);
     }
 }
