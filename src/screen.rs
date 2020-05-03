@@ -12,13 +12,17 @@ pub struct Screen {
 
 impl Screen {
     pub fn new() -> Self {
+        let (cols, rows) = terminal_size().unwrap();
         Self {
-            size: terminal_size().unwrap(),
+            size: (cols, rows - 2),
         }
     }
 
     pub fn new_with_size(size: Size) -> Self {
-        Self { size }
+        let (cols, rows) = size;
+        Self {
+            size: (cols, rows - 2)
+        }
     }
 
     pub fn clear(&self) {
@@ -29,10 +33,12 @@ impl Screen {
         if let Some(line) = self.line_nr_for(&log, id.clone()) {
             let entry = log.get(id.clone()).unwrap();
             let color = self.color_for(entry);
+            let (cols, rows) = self.size;
 
             print!("{}", cursor::Goto(1, line));
             print!("{}", color::Fg(color));
-            entry.print();
+            print!("[{}/{}:s{}]", line, rows, log.len());
+            entry.print(&usize::try_from(cols).unwrap());
         }
     }
 
@@ -72,54 +78,48 @@ mod tests {
     use super::Screen;
 
     #[test]
-    fn test_line_nr_for_when_all_fit() {
+    fn test_line_nr_for() {
         let mut log = Log::new();
+        let size = (30, 4);
+        let screen = Screen::new_with_size(size);
+
+        let uuid0 = log.add(log_start!("0")).unwrap();
+        assert_eq!(screen.line_nr_for(&log, uuid0.clone()), Some(1));
+
+        let uuid1 = log.add(log_start!("1")).unwrap();
+        assert_eq!(screen.line_nr_for(&log, uuid1.clone()), Some(2));
+
+        let uuid2 = log.add(log_start!("2")).unwrap();
+        assert_eq!(screen.line_nr_for(&log, uuid0.clone()), None);
+        assert_eq!(screen.line_nr_for(&log, uuid1.clone()), Some(1));
+        assert_eq!(screen.line_nr_for(&log, uuid2.clone()), Some(2));
+
+        let uuid3 = log.add(log_start!("3")).unwrap();
+        assert_eq!(screen.line_nr_for(&log, uuid0.clone()), None);
+        assert_eq!(screen.line_nr_for(&log, uuid1.clone()), None);
+        assert_eq!(screen.line_nr_for(&log, uuid2.clone()), Some(1));
+        assert_eq!(screen.line_nr_for(&log, uuid3.clone()), Some(2));
+    }
+
+    #[test]
+    fn test_line_nr_for_on_updated_entries() {
+        let mut log = Log::new();
+        let size = (30, 4);
+        let screen = Screen::new_with_size(size);
+
         let uuid0 = log.add(log_start!("0")).unwrap();
         let uuid1 = log.add(log_start!("1")).unwrap();
-        let size = (1, 2);
+        log.add(log_start!("2")).unwrap();
+        let uuid3 = log.add(log_start!("3")).unwrap();
 
-        let screen = Screen::new_with_size(size);
+        log.add(log_start!("4")).unwrap();
+        let uuid4 = log.add(log_end!("4")).unwrap();
+        let uuid2 = log.add(log_end!("2")).unwrap();
 
-        assert_eq!(screen.line_nr_for(&log, uuid0), Some(1));
-        assert_eq!(screen.line_nr_for(&log, uuid1), Some(2));
-    }
-
-    #[test]
-    fn test_line_nr_for_when_lines_out_of_screen() {
-        let mut log = Log::new();
-        let uuids = vec![
-            log.add(log_start!("0")).unwrap(),
-            log.add(log_start!("1")).unwrap(),
-            log.add(log_start!("2")).unwrap(),
-        ];
-
-        let size = (1, 2);
-
-        let screen = Screen::new_with_size(size);
-
-        assert_eq!(screen.line_nr_for(&log, uuids[0].clone()), None);
-        assert_eq!(screen.line_nr_for(&log, uuids[1].clone()), Some(1));
-        assert_eq!(screen.line_nr_for(&log, uuids[2].clone()), Some(2));
-    }
-
-    #[test]
-    fn test_line_nr_for_on_many_lines() {
-        let mut log = Log::new();
-        let uuids = vec![
-            log.add(log_start!("0")).unwrap(),
-            log.add(log_start!("1")).unwrap(),
-            log.add(log_start!("2")).unwrap(),
-            log.add(log_start!("3")).unwrap(),
-            log.add(log_start!("4")).unwrap(),
-            log.add(log_start!("5")).unwrap(),
-            log.add(log_start!("6")).unwrap(),
-            log.add(log_start!("7")).unwrap(),
-        ];
-        let size = (1, 2);
-
-        let screen = Screen::new_with_size(size);
-
-        assert_eq!(screen.line_nr_for(&log, uuids[3].clone()), None);
-        assert_eq!(screen.line_nr_for(&log, uuids[7].clone()), Some(2));
+        assert_eq!(screen.line_nr_for(&log, uuid0), None);
+        assert_eq!(screen.line_nr_for(&log, uuid1), None);
+        assert_eq!(screen.line_nr_for(&log, uuid2), None);
+        assert_eq!(screen.line_nr_for(&log, uuid3), Some(1));
+        assert_eq!(screen.line_nr_for(&log, uuid4), Some(2));
     }
 }
