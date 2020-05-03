@@ -59,12 +59,6 @@ impl Log {
             }
         }
     }
-
-    pub fn print(&self, id: String) {
-        let entry = self.entries.get(&id).unwrap();
-
-        entry.print();
-    }
 }
 
 #[cfg(test)]
