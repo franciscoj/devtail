@@ -21,7 +21,7 @@ impl Screen {
     pub fn new_with_size(size: Size) -> Self {
         let (cols, rows) = size;
         Self {
-            size: (cols, rows - 2)
+            size: (cols, rows - 2),
         }
     }
 
