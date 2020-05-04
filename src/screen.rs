@@ -67,7 +67,7 @@ impl Screen {
             HttpStatus::Info(_) => color::Rgb(0, 255, 0),
             HttpStatus::Success(_) => color::Rgb(0, 255, 0),
             HttpStatus::Redirect(_) => color::Rgb(0, 0, 255),
-            HttpStatus::ClientError(_) => color::Rgb(255, 0, 0),
+            HttpStatus::ClientError(_) => color::Rgb(255, 0, 255),
             HttpStatus::ServerError(_) => color::Rgb(255, 0, 0),
             HttpStatus::Unknown(_) => color::Rgb(255, 255, 0),
         }
