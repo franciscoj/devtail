@@ -17,6 +17,7 @@ pub fn parse(line: &String) -> Option<ParseResult<'_>> {
 
     if let Some(http_status) = parse_http_status(line) {
         match http_status {
+            100..=199 => Some((id, HttpStatus::Info(http_status))),
             200..=299 => Some((id, HttpStatus::Success(http_status))),
             300..=399 => Some((id, HttpStatus::Redirect(http_status))),
             400..=499 => Some((id, HttpStatus::ClientError(http_status))),

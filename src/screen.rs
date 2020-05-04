@@ -64,6 +64,7 @@ impl Screen {
 
     fn color_for(&self, entry: &Entry) -> color::Rgb {
         match entry.status {
+            HttpStatus::Info(_) => color::Rgb(0, 255, 0),
             HttpStatus::Success(_) => color::Rgb(0, 255, 0),
             HttpStatus::Redirect(_) => color::Rgb(0, 0, 255),
             HttpStatus::ClientError(_) => color::Rgb(255, 0, 0),
