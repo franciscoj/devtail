@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate clap;
+extern crate devtail;
 
 use clap::Arg;
 use devtail::cmd;

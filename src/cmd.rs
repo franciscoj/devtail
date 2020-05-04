@@ -1,5 +1,3 @@
-extern crate termion;
-
 use super::log::Log;
 use super::screen::Screen;
 use super::tail::Tail;

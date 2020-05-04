@@ -1,3 +1,6 @@
+extern crate regex;
+extern crate termion;
+
 #[macro_use]
 mod test_macros;
 
