@@ -9,7 +9,7 @@ const HTTP_STATUS_REGEX: &str = r"Completed ([1-5]+[0-9]{2})";
 
 type ParseResult<'a> = (String, HttpStatus);
 
-pub fn parse(line: &String) -> Option<ParseResult<'_>> {
+pub fn parse(line: &str) -> Option<ParseResult<'_>> {
     let uuid_regex = Regex::new(UUID_REGEX).unwrap();
     let captures = uuid_regex.captures(&line)?;
     let id_match = captures.get(1)?;
@@ -29,7 +29,7 @@ pub fn parse(line: &String) -> Option<ParseResult<'_>> {
     }
 }
 
-fn parse_http_status(line: &String) -> Option<u16> {
+fn parse_http_status(line: &str) -> Option<u16> {
     let http_status_regex = Regex::new(HTTP_STATUS_REGEX).unwrap();
     let captures = http_status_regex.captures(&line)?;
     let status_match = captures.get(1)?;

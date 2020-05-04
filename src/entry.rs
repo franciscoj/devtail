@@ -68,9 +68,9 @@ impl Entry {
     // while this prints. Seems like some kind of "presenter" or "view" could be needed but I'm
     // still not sure that's something that can be needed.
     /// Prints the first line on this `Entry`.
-    pub fn print(&self, cols: &usize) {
+    pub fn print(&self, cols: usize) {
         let mut line = self.lines[0].clone();
-        line.truncate(*cols - 15);
+        line.truncate(cols - 15);
 
         // print!("[{}]", self.order);
         println!("{}", line);

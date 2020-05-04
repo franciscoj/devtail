@@ -6,6 +6,7 @@ use termion::{clear, color, cursor, terminal_size};
 
 type Size = (u16, u16);
 
+#[derive(Default)]
 pub struct Screen {
     size: Size,
 }
@@ -58,7 +59,7 @@ impl Screen {
             print!("{}", cursor::Goto(1, line));
             print!("{}", color::Fg(color));
             // print!("[{}/{}:s{}]", line, rows, log.len());
-            entry.print(&usize::try_from(cols).unwrap());
+            entry.print(usize::try_from(cols).unwrap());
         }
     }
 
@@ -116,10 +117,10 @@ mod tests {
         assert_eq!(screen.line_nr_for(&log, uuid2.clone()), Some(2));
 
         let uuid3 = log.add(log_start!("3")).unwrap();
-        assert_eq!(screen.line_nr_for(&log, uuid0.clone()), None);
-        assert_eq!(screen.line_nr_for(&log, uuid1.clone()), None);
-        assert_eq!(screen.line_nr_for(&log, uuid2.clone()), Some(1));
-        assert_eq!(screen.line_nr_for(&log, uuid3.clone()), Some(2));
+        assert_eq!(screen.line_nr_for(&log, uuid0), None);
+        assert_eq!(screen.line_nr_for(&log, uuid1), None);
+        assert_eq!(screen.line_nr_for(&log, uuid2), Some(1));
+        assert_eq!(screen.line_nr_for(&log, uuid3), Some(2));
     }
 
     #[test]

@@ -11,6 +11,7 @@ use std::collections::{hash_map::Entry as MapEntry, HashMap};
 ///
 /// assert!(log.is_empty());
 /// ```
+#[derive(Default)]
 pub struct Log {
     /// A list of all the UUIDs on this log.
     pub entry_ids: Vec<String>,
@@ -80,7 +81,7 @@ mod tests {
 
         let entry = log.entries.get(&uuid!("0")).unwrap();
 
-        assert_eq!(id, String::from(uuid!("0")));
+        assert_eq!(id, uuid!("0"));
         assert_eq!(log.len(), 2);
         assert_eq!(entry.status, HttpStatus::Success(200));
     }

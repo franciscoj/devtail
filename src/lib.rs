@@ -1,3 +1,5 @@
+#![deny(clippy::all)]
+
 extern crate regex;
 extern crate termion;
 
