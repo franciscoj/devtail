@@ -12,7 +12,7 @@ pub type TailS<'a> = Tail<StdinLock<'a>>;
 
 impl TailF {
     pub fn new(file_name: String) -> Self {
-        let file = File::open(file_name.clone()).unwrap();
+        let file = File::open(file_name).unwrap();
         let mut reader = BufReader::new(file);
         reader.seek(SeekFrom::End(0)).unwrap();
 

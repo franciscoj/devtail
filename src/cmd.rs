@@ -14,7 +14,7 @@ pub fn run<T: BufRead>(tail: Tail<T>) {
     screen.clear();
 
     for line in tail {
-        if let Some(_) = log.add(line.clone()) {
+        if log.add(line.clone()).is_some() {
             screen.print_log(&log);
         }
     }

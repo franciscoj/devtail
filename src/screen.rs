@@ -51,7 +51,7 @@ impl Screen {
 
     fn print(&self, log: &Log, id: String) {
         if let Some(line) = self.line_nr_for(&log, id.clone()) {
-            let entry = log.get(id.clone()).unwrap();
+            let entry = log.get(id).unwrap();
             let color = self.color_for(entry);
             let (cols, _rows) = self.size;
 
