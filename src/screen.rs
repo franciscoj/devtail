@@ -81,9 +81,6 @@ impl Screen {
         let (_, rows) = self.size;
         let order = u16::try_from(entry.order).unwrap();
 
-        // TODO: This is wrong and there's a bug here somehow. When the size of the log overflows
-        // the screen's size, then the cursor get's kind of crazy and things aren't printed where
-        // they should.
         if log_size <= rows {
             Some(order)
         } else if order > log_size - rows {
