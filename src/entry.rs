@@ -70,9 +70,9 @@ impl Entry {
     /// Prints the first line on this `Entry`.
     pub fn print(&self, cols: usize) {
         let mut line = self.lines[0].clone();
-        line.truncate(cols - 15);
+        let max_cols = cols - 1;
 
-        // print!("[{}]", self.order);
-        println!("{}", line);
+        line.truncate(max_cols);
+        println!("{:<max_cols$}", line, max_cols = max_cols);
     }
 }
