@@ -14,20 +14,28 @@ pub struct Screen {
 impl Screen {
     pub fn new() -> Self {
         let (cols, rows) = terminal_size().unwrap();
+
         Self {
             size: (cols, rows - 2),
         }
     }
 
+    /// This one isn't meant to be used except on unit tests, where there's no real screen to get
+    /// the size and also to be able to fix the size we want to use on the tests.
     pub fn new_with_size(size: Size) -> Self {
         let (cols, rows) = size;
+
         Self {
             size: (cols, rows - 2),
         }
     }
 
     pub fn clear(&self) {
-        println!("{}{}", clear::All, cursor::Goto(1, 1));
+        let (_, max_rows) = self.size;
+
+        println!("{}", clear::All);
+        println!("{}:>", cursor::Goto(1, max_rows + 2));
+        println!("{}", cursor::Goto(1, 1));
     }
 
     /// Prints a log by printing the last lines that fit in the screen.
@@ -77,8 +85,8 @@ impl Screen {
     fn line_nr_for(&self, log: &Log, id: String) -> Option<u16> {
         let entry = log.get(id)?;
 
-        let log_size = u16::try_from(log.len()).unwrap();
         let (_, rows) = self.size;
+        let log_size = u16::try_from(log.len()).unwrap();
         let order = u16::try_from(entry.order).unwrap();
 
         if log_size <= rows {
